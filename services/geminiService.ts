@@ -1,28 +1,20 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// Helper to get client with specific key
-const getAIClient = (apiKey: string) => {
-  if (!apiKey) {
-    throw new Error("API KEY is required for this operation.");
-  }
-  return new GoogleGenAI({ apiKey: apiKey });
-};
-
 export const geminiService = {
   /**
    * Generates an image or edits an image using Gemini.
    * Now supports both Main Image (structure) and Reference Image (style/background) simultaneously.
    */
   generateImage: async (
-    apiKey: string,
     prompt: string,
     mainImageBase64?: string,
     mainMimeType?: string,
     refImageBase64?: string,
     refMimeType?: string
   ): Promise<string> => {
-    const ai = getAIClient(apiKey);
+    // Initialize with environment variable
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
     // Switch to 'gemini-3-pro-image-preview' to support specific imageSize (2K) and better instruction following for blending
     const model = 'gemini-3-pro-image-preview';
@@ -101,10 +93,11 @@ export const geminiService = {
 
   /**
    * Upscales an image to 4K using the Pro model.
-   * STRICT: Requires apiKey
    */
-  upscaleImage4K: async (apiKey: string, imageBase64: string, mimeType: string): Promise<string> => {
-    const ai = getAIClient(apiKey);
+  upscaleImage4K: async (imageBase64: string, mimeType: string): Promise<string> => {
+    // Initialize with environment variable
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
     // High-Quality Image Generation/Editing Tasks -> 'gemini-3-pro-image-preview'
     const model = 'gemini-3-pro-image-preview';
 

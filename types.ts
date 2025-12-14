@@ -15,7 +15,6 @@ export interface User {
   role: Role;
   expiryDate?: string; // ISO Date string
   isActive: boolean;
-  apiKey?: string; // Optional custom key
   sessionToken?: string; // For validating active sessions
 }
 
@@ -60,11 +59,7 @@ export type TranslationKey =
   | 'styleOil'
   | 'stylePencil'
   | 'styleMagic'
-  | 'styleColorPencil'
-  | 'apiKeyLabel'
-  | 'saveKey'
-  | 'getKey'
-  | 'apiKeyRequired';
+  | 'styleColorPencil';
 
 export const DICTIONARY: Record<Language, Record<TranslationKey, string>> = {
   [Language.EN]: {
@@ -95,11 +90,7 @@ export const DICTIONARY: Record<Language, Record<TranslationKey, string>> = {
     styleOil: 'Oil Painting',
     stylePencil: 'Pencil Sketch',
     styleMagic: 'Magic Marker',
-    styleColorPencil: 'Colored Pencil',
-    apiKeyLabel: 'Your Gemini API Key',
-    saveKey: 'Save Key',
-    getKey: 'Get API Key',
-    apiKeyRequired: 'Please enter and save your API Key first.'
+    styleColorPencil: 'Colored Pencil'
   },
   [Language.TH]: {
     appTitle: 'Professional AI',
@@ -129,10 +120,6 @@ export const DICTIONARY: Record<Language, Record<TranslationKey, string>> = {
     styleOil: 'ภาพสีน้ำมัน',
     stylePencil: 'ภาพดินสอ',
     styleMagic: 'ภาพสีเมจิก',
-    styleColorPencil: 'ภาพสีไม้',
-    apiKeyLabel: 'Gemini API Key ส่วนตัว',
-    saveKey: 'บันทึกคีย์',
-    getKey: 'ขอคีย์ใหม่',
-    apiKeyRequired: 'กรุณากรอกและบันทึก API Key ก่อนใช้งาน'
+    styleColorPencil: 'ภาพสีไม้'
   }
 };

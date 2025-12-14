@@ -107,7 +107,6 @@ const App: React.FC = () => {
 
   const [presetsOpen, setPresetsOpen] = useState(false);
   const [imageStyleOpen, setImageStyleOpen] = useState(false);
-  const [apiKeyOpen, setApiKeyOpen] = useState(false);
   
   // Image History Stack
   const [history, setHistory] = useState<ImageState[]>([]);
@@ -115,9 +114,6 @@ const App: React.FC = () => {
   
   // Reference Image (Separate from history)
   const [referenceImage, setReferenceImage] = useState<{data: string, mime: string} | null>(null);
-
-  // API Key State
-  const [apiKey, setApiKey] = useState('');
 
   // UI State
   const [loading, setLoading] = useState(false);
@@ -131,18 +127,6 @@ const App: React.FC = () => {
 
   const t = DICTIONARY[lang];
 
-  // Load API Key when user logs in
-  useEffect(() => {
-    if (user) {
-      if (user.apiKey) {
-        setApiKey(user.apiKey);
-        setApiKeyOpen(false); // Collapsed if exists
-      } else {
-        setApiKeyOpen(true); // Expanded if missing
-      }
-    }
-  }, [user]);
-
   // --- Handlers ---
 
   const handleLogout = () => {
@@ -154,16 +138,6 @@ const App: React.FC = () => {
     setRefinePrompt('');
     setActivePreset(null);
     setActiveStyle(null);
-    setApiKey('');
-  };
-
-  const handleSaveApiKey = () => {
-    if (user && apiKey.trim()) {
-      const updatedUser = authService.updateUserApiKey(user.username, apiKey.trim());
-      setUser(updatedUser);
-      alert('API Key Saved!');
-      setApiKeyOpen(false); // Close on save
-    }
   };
 
   const handleRefImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,13 +198,6 @@ const App: React.FC = () => {
         return;
     }
 
-    // 2. API Key Validation
-    if (!apiKey) {
-        alert(t.apiKeyRequired);
-        setApiKeyOpen(true);
-        return;
-    }
-
     setLoading(true);
     try {
       const effectivePrompt = historyIndex > 0 && refinePrompt ? refinePrompt : mainPrompt;
@@ -256,7 +223,6 @@ const App: React.FC = () => {
 
       // Pass everything to service
       const generatedBase64 = await geminiService.generateImage(
-          apiKey, 
           promptToSend, 
           mainImg, 
           mainMime,
@@ -279,7 +245,7 @@ const App: React.FC = () => {
       if (historyIndex >= 0) setRefinePrompt('');
 
     } catch (error: any) {
-      alert("Failed to generate image. Please check your API Key and try again.");
+      alert("Failed to generate image. Please try again.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -296,18 +262,12 @@ const App: React.FC = () => {
         return;
     }
 
-    if (!apiKey) {
-        alert(t.apiKeyRequired);
-        setApiKeyOpen(true);
-        return;
-    }
-
     const currentImg = history[historyIndex];
     if (!currentImg) return;
     
     setLoading(true);
     try {
-      const upscaledBase64 = await geminiService.upscaleImage4K(apiKey, currentImg.data, currentImg.mimeType);
+      const upscaledBase64 = await geminiService.upscaleImage4K(currentImg.data, currentImg.mimeType);
       
        const newImgState: ImageState = {
         data: upscaledBase64,
@@ -455,51 +415,6 @@ const App: React.FC = () => {
         
         {/* --- Sidebar (Left) --- */}
         <aside className="w-[300px] bg-brand-panel border-r border-gray-700 flex flex-col p-3 z-10 shadow-lg">
-          
-          {/* API Key Panel (Collapsible) */}
-          <div className="bg-gray-800/50 rounded-lg border border-yellow-600/30 mb-3 shadow-inner overflow-hidden">
-             <button 
-                onClick={() => setApiKeyOpen(!apiKeyOpen)}
-                className="w-full p-2.5 flex items-center justify-between text-left transition-colors hover:bg-gray-700/50"
-             >
-                <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-yellow-500 font-bold uppercase">{t.apiKeyLabel}</span>
-                    {!user.apiKey && <span className="text-[10px] text-red-500 font-bold animate-pulse">*</span>}
-                    {user.apiKey && <span className="text-[10px] text-green-500">✓</span>}
-                </div>
-                <span className="text-gray-400 text-[10px]">{apiKeyOpen ? '−' : '+'}</span>
-             </button>
-             
-             {apiKeyOpen && (
-               <div className="p-2.5 pt-0 border-t border-gray-700/30">
-                 <div className="mb-2 mt-2">
-                    <input 
-                        type="password"
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        placeholder="Enter AI Studio Key..."
-                        className="w-full bg-black/40 border border-gray-600 rounded px-2 py-1 text-[11px] text-white focus:border-yellow-500 focus:outline-none"
-                    />
-                 </div>
-                 <div className="flex justify-between gap-2">
-                    <button 
-                      onClick={handleSaveApiKey}
-                      className="flex-1 bg-yellow-700/80 hover:bg-yellow-600 text-yellow-100 text-[10px] py-1 rounded font-bold transition-colors"
-                    >
-                      {t.saveKey}
-                    </button>
-                    <a 
-                       href="https://aistudio.google.com/app/apikey" 
-                       target="_blank" 
-                       rel="noreferrer"
-                       className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-200 text-[10px] py-1 rounded flex items-center justify-center font-bold transition-colors"
-                    >
-                       {t.getKey}
-                    </a>
-                 </div>
-               </div>
-             )}
-          </div>
 
           {/* Main Prompt */}
           <div className="mb-3">

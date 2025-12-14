@@ -111,17 +111,6 @@ export const authService = {
     }
   },
 
-  updateUserApiKey: (username: string, apiKey: string) => {
-    const users = authService.getAllUsers();
-    const idx = users.findIndex(u => u.username === username);
-    if (idx !== -1) {
-        users[idx].apiKey = apiKey;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-        return users[idx];
-    }
-    return null;
-  },
-
   toggleStatus: (userId: string) => {
     const users = authService.getAllUsers();
     const idx = users.findIndex(u => u.id === userId);
