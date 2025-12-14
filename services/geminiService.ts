@@ -1,6 +1,14 @@
 
 import { GoogleGenAI } from "@google/genai";
 
+// Fix for TS2580: Cannot find name 'process'
+declare const process: {
+  env: {
+    API_KEY: string;
+    [key: string]: string | undefined;
+  }
+};
+
 export const geminiService = {
   /**
    * Generates an image or edits an image using Gemini.
