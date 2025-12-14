@@ -76,6 +76,7 @@ export const geminiService = {
         contents: { parts },
         config: {
           // Explicitly request 2K resolution as requested
+          // @ts-ignore: imageConfig not yet in strict types
           imageConfig: {
             imageSize: "2K"
           }
@@ -124,6 +125,7 @@ export const geminiService = {
           ]
         },
         config: {
+            // @ts-ignore: imageConfig not yet in strict types
             imageConfig: {
                 imageSize: "4K" // Explicitly requesting 4K
             }
