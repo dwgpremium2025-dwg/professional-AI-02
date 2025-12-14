@@ -21,6 +21,11 @@ export const geminiService = {
     refImageBase64?: string,
     refMimeType?: string
   ): Promise<string> => {
+    // Check for API Key
+    if (!process.env.API_KEY) {
+        throw new Error("API Key is missing. Please create a .env file and add API_KEY=your_key");
+    }
+
     // Initialize with environment variable
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
@@ -103,6 +108,11 @@ export const geminiService = {
    * Upscales an image to 4K using the Pro model.
    */
   upscaleImage4K: async (imageBase64: string, mimeType: string): Promise<string> => {
+    // Check for API Key
+    if (!process.env.API_KEY) {
+        throw new Error("API Key is missing. Please create a .env file and add API_KEY=your_key");
+    }
+
     // Initialize with environment variable
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     

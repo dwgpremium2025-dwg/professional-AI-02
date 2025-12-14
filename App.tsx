@@ -245,8 +245,12 @@ const App: React.FC = () => {
       if (historyIndex >= 0) setRefinePrompt('');
 
     } catch (error: any) {
-      alert("Failed to generate image. Please try again.");
       console.error(error);
+      if (error.message && error.message.includes("API Key is missing")) {
+         alert("SYSTEM ERROR: API Key Missing.\n\nPlease check your .env file in the project root.\nUse: API_KEY=your_key");
+      } else {
+         alert("Failed to generate image. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -281,8 +285,12 @@ const App: React.FC = () => {
       setHistory(newHistory);
       setHistoryIndex(newHistory.length - 1);
       
-    } catch (error) {
-      alert("Upscale failed.");
+    } catch (error: any) {
+      if (error.message && error.message.includes("API Key is missing")) {
+         alert("SYSTEM ERROR: API Key Missing.\n\nPlease check your .env file in the project root.");
+      } else {
+         alert("Upscale failed.");
+      }
     } finally {
       setLoading(false);
     }
